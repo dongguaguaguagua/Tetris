@@ -8,6 +8,7 @@ import 'active_actions.dart';
 import 'static_actions.dart';
 import 'utilities.dart';
 import 'dart:async';
+import 'score_system.dart';
 
 class GamePage extends StatefulWidget {
   GamePage({super.key});
@@ -34,7 +35,7 @@ class _GamePageState extends State<GamePage> {
   Timer? _moveTimer;
 
   void startGameTimer() {
-    final Duration duration = Duration(milliseconds: 1000);
+    final Duration duration = Duration(milliseconds: 500);
 
     _gameTimer = Timer.periodic(duration, (timer) {
       if (mounted) {
@@ -72,7 +73,7 @@ class _GamePageState extends State<GamePage> {
     startGameTimer();
   }
 
-  void restartGame(){
+  void restartGame() {
     setState(() {
       gameOver = false;
     });
@@ -89,7 +90,8 @@ class _GamePageState extends State<GamePage> {
     setState(() {
       wallCollisionHandler(activeBlocks, staticBlocks, tempActiveBlocks);
     });
-    lineEliminater(staticBlocks);
+    List<int> lines = lineDetector(staticBlocks);
+    lineEliminater(staticBlocks, lines);
   }
 
   void descend() {
@@ -97,8 +99,10 @@ class _GamePageState extends State<GamePage> {
     descendHandler(activeBlocks);
     setState(() {
       deadCollisionHandler(activeBlocks, staticBlocks, tempActiveBlocks);
+      List<int> lines = lineDetector(staticBlocks);
+      lineEliminater(staticBlocks, lines);
+      addScore(lines);
     });
-    lineEliminater(staticBlocks);
     gameOverDetector(staticBlocks, _gameTimer);
   }
 
@@ -123,7 +127,8 @@ class _GamePageState extends State<GamePage> {
     setState(() {
       wallCollisionHandler(activeBlocks, staticBlocks, tempActiveBlocks);
     });
-    lineEliminater(staticBlocks);
+    List<int> lines = lineDetector(staticBlocks);
+    lineEliminater(staticBlocks, lines);
   }
 
   void moveRight() {
@@ -132,7 +137,8 @@ class _GamePageState extends State<GamePage> {
     setState(() {
       wallCollisionHandler(activeBlocks, staticBlocks, tempActiveBlocks);
     });
-    lineEliminater(staticBlocks);
+    List<int> lines = lineDetector(staticBlocks);
+    lineEliminater(staticBlocks, lines);
   }
 
   void moveLeft() {
@@ -141,7 +147,8 @@ class _GamePageState extends State<GamePage> {
     setState(() {
       wallCollisionHandler(activeBlocks, staticBlocks, tempActiveBlocks);
     });
-    lineEliminater(staticBlocks);
+    List<int> lines = lineDetector(staticBlocks);
+    lineEliminater(staticBlocks, lines);
   }
 
   // We use timer to handle long press event,
@@ -176,37 +183,52 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body:
-      gameOver ? gameOverView() : keyBoardListener(gameView())
-    );
+    return Scaffold(
+        body: gameOver ? gameOverView() : keyBoardListener(gameView()));
   }
 
   Widget gameView() {
-    return Column(
+    return Row(
       children: [
-        Row(children: [
-          Expanded(child: controllButton(ascend, Icons.arrow_upward)),
-          Expanded(child: controllButton(descend, Icons.arrow_downward)),
-          Expanded(child: controllButton(rotate, Icons.rotate_right)),
-          Expanded(child: controllButton(moveLeft, Icons.arrow_back)),
-          Expanded(child: controllButton(moveRight, Icons.arrow_forward)),
-        ]),
         Expanded(
-            child: BlockView(
-                activeblocks: activeBlocks, staticBlocks: staticBlocks)),
+            child: Column(
+          children: [
+            Expanded(
+                child: BlockView(
+                    activeblocks: activeBlocks, staticBlocks: staticBlocks)),
+            Row(children: [
+              Expanded(child: controllButton(ascend, Icons.arrow_upward)),
+              Expanded(child: controllButton(descend, Icons.arrow_downward)),
+              Expanded(child: controllButton(rotate, Icons.rotate_right)),
+              Expanded(child: controllButton(moveLeft, Icons.arrow_back)),
+              Expanded(child: controllButton(moveRight, Icons.arrow_forward)),
+            ]),
+          ],
+        )),
+        Expanded(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: scoreView()),
+            Expanded(child: lineView()),
+          ],
+        ))
       ],
     );
   }
 
-  Widget gameOverView(){
+  Widget gameOverView() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Center(child: Column(children: [
-        const Text("Game Over!"),
-        IconButton(
-        onPressed: restartGame,
-        icon: const Icon(Icons.rotate_90_degrees_cw_sharp))
-      ],)),
+      child: Center(
+          child: Column(
+        children: [
+          const Text("Game Over!"),
+          IconButton(
+              onPressed: restartGame,
+              icon: const Icon(Icons.rotate_90_degrees_cw_sharp))
+        ],
+      )),
     );
   }
 
@@ -231,5 +253,35 @@ class _GamePageState extends State<GamePage> {
         autofocus: true,
         onKeyEvent: keyPressHandler,
         child: w);
+  }
+
+  Widget scoreView() {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Score", style: TextStyle(fontSize: 20)),
+            Text(
+              score.toString(),
+              style: TextStyle(fontSize: 30),
+            )
+          ],
+        ));
+  }
+
+  Widget lineView() {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Eliminated Lines",
+              style: TextStyle(fontSize: 20),
+            ),
+            Text(eliminatedLines.toString(), style: TextStyle(fontSize: 30))
+          ],
+        ));
   }
 }
