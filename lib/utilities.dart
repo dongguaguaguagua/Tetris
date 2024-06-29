@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'global_var.dart';
 import 'data_structure.dart';
 import 'active_actions.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 
 void displayActive(List<ActiveBlock> blocks) {
@@ -32,8 +29,7 @@ List<int> lineDetector(List<StaticBlock> blocks) {
 }
 
 // eliminate the whole line
-void lineEliminater(List<StaticBlock> blocks) {
-  List<int> lines = lineDetector(blocks);
+void lineEliminater(List<StaticBlock> blocks,List<int> lines) {
   if (lines.isNotEmpty) {
     for (int i in lines) {
       for (int j = 0; j < blockCol; j++) {
