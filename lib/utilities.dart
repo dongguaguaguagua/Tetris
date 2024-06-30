@@ -71,7 +71,8 @@ void deadCollisionHandler(List<ActiveBlock> activeBlocks,
         staticBlocks[i].status = 1;
       }
     }
-    initActiveBlocks(activeBlocks);
+    initActiveBlocks(activeBlocks,nextPattern);
+    nextPattern = randomPatternGenerator();
     print("collided");
   }
 }
