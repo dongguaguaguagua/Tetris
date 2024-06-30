@@ -2,4 +2,4 @@
 
 Yet another Tetris in flutter.
 
-![demo](./img/demo.jpg)
+![demo](./img/demo.png)
