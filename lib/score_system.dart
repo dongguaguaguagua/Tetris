@@ -14,4 +14,11 @@ void addScore(List<int> lines){
     default:
   }
   eliminatedLines += lines.length;
+  addLevel(score);
+}
+
+void addLevel(int score){
+  if(score >= levelThreshold * speed){
+    speed+=1;
+  }
 }
