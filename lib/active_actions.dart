@@ -114,8 +114,16 @@ void rotationHandler(List<ActiveBlock> blocks) {
       statusMatrix.add(blocks[i].status);
     }
   }
-  statusMatrix = transpose(statusMatrix);
-  reverseRows(statusMatrix);
+  // shift the order of `transpose` and `reverse`
+  // to change the rotate direction.
+  if(isClockwise){
+    statusMatrix = transpose(statusMatrix);
+    reverseRows(statusMatrix);
+  }else{
+    reverseRows(statusMatrix);
+    statusMatrix = transpose(statusMatrix);
+  }
+
   for (int j = 0; j < statusMatrix.length; j++) {
     int index = indexMatrix[j];
     blocks[index].status = statusMatrix[j];
@@ -237,4 +245,6 @@ void initActiveBlocks(List<ActiveBlock> blocks, int pattern) {
   for (int i = 0; i < rotateNum; i++) {
     rotationHandler(blocks);
   }
+  // add score
+  score+=20;
 }

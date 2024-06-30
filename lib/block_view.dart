@@ -14,14 +14,13 @@ class BlockView extends StatefulWidget {
 }
 
 class _BlockViewState extends State<BlockView> {
-  Color backgroundColor = Colors.white;
   Color blockColor(ActiveBlock active, StaticBlock static) {
     if (active.status == 1) {
-      return Colors.purple;
+      return activeBlockColor;
     } else if (static.status == 1) {
-      return Colors.black;
+      return deadBlockColor;
     }
-    return Colors.grey;
+    return emptyBlockColor;
   }
 
   int calculateViewPos(int viewPos){
@@ -74,15 +73,13 @@ class _BlockViewState extends State<BlockView> {
 
 
 class PatternIndicator extends StatelessWidget {
-
-  Color backgroundColor = Colors.white;
   List<ActiveBlock> blocks = generateIndicator(nextPattern);
 
   Color blockColor(ActiveBlock active) {
     if (active.status == 1) {
-      return Colors.purple;
+      return activeBlockColor;
     }
-    return Colors.grey;
+    return emptyBlockColor;
   }
 
   @override
@@ -110,12 +107,12 @@ class PatternIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: blockColor(activeBlock),
         border:
-            Border.all(color: blockColor(activeBlock), width: 4),
+            Border.all(color: blockColor(activeBlock), width: 2),
       ),
       child: Center(
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: backgroundColor, width: 4)),
+              border: Border.all(color: backgroundColor, width: 2)),
         ),
       ),
     );

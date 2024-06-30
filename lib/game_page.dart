@@ -44,7 +44,7 @@ class _GamePageState extends State<GamePage> {
   }
 
   void startGameTimer() {
-    final Duration duration = Duration(milliseconds: 500);
+    final Duration duration = Duration(milliseconds: (1000 ~/ speed).toInt());
 
     _gameTimer = Timer.periodic(duration, (timer) {
       if (mounted) {
@@ -195,6 +195,7 @@ class _GamePageState extends State<GamePage> {
     return Row(
       children: [
         Expanded(
+          flex: 5,
             child: Column(
           children: [
             Expanded(
@@ -210,13 +211,14 @@ class _GamePageState extends State<GamePage> {
           ],
         )),
         Expanded(
+          flex: 3,
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(child: nextPatternView()),
             Expanded(child: scoreView()),
             Expanded(child: lineView()),
+            Expanded(child: nextPatternView()),
           ],
         ))
       ],
