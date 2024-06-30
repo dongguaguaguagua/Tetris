@@ -216,8 +216,9 @@ class _GamePageState extends State<GamePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(child: scoreView()),
-            Expanded(child: lineView()),
+            Expanded(child: textNumberView("Score",score)),
+            Expanded(child: textNumberView("Eliminated Lines", eliminatedLines)),
+            Expanded(child: textNumberView("Speed", speed)),
             Expanded(child: nextPatternView()),
           ],
         ))
@@ -263,32 +264,17 @@ class _GamePageState extends State<GamePage> {
         child: w);
   }
 
-  Widget scoreView() {
+  Widget textNumberView(String text,int num) {
     return Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Score", style: TextStyle(fontSize: 20)),
+            Text(text, style: TextStyle(fontSize: 20)),
             Text(
-              score.toString(),
+              num.toString(),
               style: TextStyle(fontSize: 30),
             )
-          ],
-        ));
-  }
-
-  Widget lineView() {
-    return Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Eliminated Lines",
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(eliminatedLines.toString(), style: TextStyle(fontSize: 30))
           ],
         ));
   }
