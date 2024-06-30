@@ -34,6 +34,15 @@ class _GamePageState extends State<GamePage> {
   // the move timer is set to dealing with keyboard events.
   Timer? _moveTimer;
 
+  void initState() {
+    super.initState();
+    int firstPattern = randomPatternGenerator();
+    initActiveBlocks(activeBlocks, firstPattern);
+    nextPattern = randomPatternGenerator();
+    initStaticBlocks(staticBlocks);
+    startGameTimer();
+  }
+
   void startGameTimer() {
     final Duration duration = Duration(milliseconds: 500);
 
@@ -43,6 +52,16 @@ class _GamePageState extends State<GamePage> {
           descend();
         });
       }
+    });
+  }
+
+  // Long press some keys will invoke this function,
+  // and it will set a timer to circulate the execution.
+  void startMoveTimer(VoidCallback callback) {
+    _moveTimer?.cancel();
+    callback();
+    _moveTimer = Timer.periodic(Duration(milliseconds: 200), (timer) {
+      callback();
     });
   }
 
@@ -56,28 +75,13 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
-  // Long press some keys will invoke this function,
-  // and it will set a timer to circulate the execution.
-  void startMoveTimer(VoidCallback callback) {
-    _moveTimer?.cancel();
-    callback();
-    _moveTimer = Timer.periodic(Duration(milliseconds: 200), (timer) {
-      callback();
-    });
-  }
-
-  void initState() {
-    super.initState();
-    initActiveBlocks(activeBlocks);
-    initStaticBlocks(staticBlocks);
-    startGameTimer();
-  }
-
   void restartGame() {
     setState(() {
       gameOver = false;
     });
-    initActiveBlocks(activeBlocks);
+    int firstPattern = randomPatternGenerator();
+    initActiveBlocks(activeBlocks, firstPattern);
+    nextPattern = randomPatternGenerator();
     initStaticBlocks(staticBlocks);
     startGameTimer();
   }
@@ -208,7 +212,9 @@ class _GamePageState extends State<GamePage> {
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            Expanded(child: nextPatternView()),
             Expanded(child: scoreView()),
             Expanded(child: lineView()),
           ],
@@ -219,7 +225,7 @@ class _GamePageState extends State<GamePage> {
 
   Widget gameOverView() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(20),
       child: Center(
           child: Column(
         children: [
@@ -257,7 +263,7 @@ class _GamePageState extends State<GamePage> {
 
   Widget scoreView() {
     return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -272,7 +278,7 @@ class _GamePageState extends State<GamePage> {
 
   Widget lineView() {
     return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -283,5 +289,20 @@ class _GamePageState extends State<GamePage> {
             Text(eliminatedLines.toString(), style: TextStyle(fontSize: 30))
           ],
         ));
+  }
+
+  Widget nextPatternView() {
+    return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Next Pattern",
+                style: TextStyle(fontSize: 20),
+              ),
+              Expanded(child: PatternIndicator()),
+            ]));
   }
 }

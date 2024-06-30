@@ -11,3 +11,4 @@ int score = 0;
 int highestScore = 0;
 int eliminatedLines = 0;
 
+int nextPattern = 0;

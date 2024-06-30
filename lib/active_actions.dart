@@ -39,63 +39,63 @@ void matrixGenerator(List<ActiveBlock> blocks, int pattern) {
   }
 }
 
-void patternGenerator(List<ActiveBlock> blocks, int pattern) {
-  int startPoint = (blockCol ~/ 2).toInt();
+void patternGenerator(List<ActiveBlock> blocks, int pattern, int col) {
+  int startPoint = (col ~/ 2).toInt();
   switch (pattern) {
     case 1:
       //[ ][*]
       //[ ][ ]
       blocks[startPoint].status = 1;
       blocks[startPoint - 1].status = 1;
-      blocks[startPoint + blockCol].status = 1;
-      blocks[startPoint + blockCol - 1].status = 1;
+      blocks[startPoint + col].status = 1;
+      blocks[startPoint + col - 1].status = 1;
       break;
     case 2:
       //[ ] *
       //[ ][ ][ ]
       blocks[startPoint - 1].status = 1;
-      blocks[startPoint + blockCol].status = 1;
-      blocks[startPoint + blockCol - 1].status = 1;
-      blocks[startPoint + blockCol + 1].status = 1;
+      blocks[startPoint + col].status = 1;
+      blocks[startPoint + col - 1].status = 1;
+      blocks[startPoint + col + 1].status = 1;
       break;
     case 3:
       //   [*]
       //[ ][ ][ ]
       blocks[startPoint].status = 1;
-      blocks[startPoint + blockCol].status = 1;
-      blocks[startPoint + blockCol - 1].status = 1;
-      blocks[startPoint + blockCol + 1].status = 1;
+      blocks[startPoint + col].status = 1;
+      blocks[startPoint + col - 1].status = 1;
+      blocks[startPoint + col + 1].status = 1;
       break;
     case 4:
       //    * [ ]
       //[ ][ ][ ]
       blocks[startPoint + 1].status = 1;
-      blocks[startPoint + blockCol].status = 1;
-      blocks[startPoint + blockCol - 1].status = 1;
-      blocks[startPoint + blockCol + 1].status = 1;
+      blocks[startPoint + col].status = 1;
+      blocks[startPoint + col - 1].status = 1;
+      blocks[startPoint + col + 1].status = 1;
       break;
     case 5:
       //   [*][ ]
       //[ ][ ]
       blocks[startPoint].status = 1;
       blocks[startPoint + 1].status = 1;
-      blocks[startPoint + blockCol].status = 1;
-      blocks[startPoint + blockCol - 1].status = 1;
+      blocks[startPoint + col].status = 1;
+      blocks[startPoint + col - 1].status = 1;
       break;
     case 6:
       //[ ][*]
       //   [ ][ ]
       blocks[startPoint].status = 1;
       blocks[startPoint - 1].status = 1;
-      blocks[startPoint + blockCol].status = 1;
-      blocks[startPoint + blockCol + 1].status = 1;
+      blocks[startPoint + col].status = 1;
+      blocks[startPoint + col + 1].status = 1;
       break;
     case 7:
       //[ ][ ][*][ ]
-      blocks[startPoint + blockCol].status = 1;
-      blocks[startPoint + blockCol - 1].status = 1;
-      blocks[startPoint + blockCol - 2].status = 1;
-      blocks[startPoint + blockCol + 1].status = 1;
+      blocks[startPoint + col].status = 1;
+      blocks[startPoint + col - 1].status = 1;
+      blocks[startPoint + col - 2].status = 1;
+      blocks[startPoint + col + 1].status = 1;
       break;
     default:
       break;
@@ -207,20 +207,32 @@ void leftMoveHandler(List<ActiveBlock> blocks) {
   }
 }
 
-void initActiveBlocks(List<ActiveBlock> blocks) {
-  // initiate
-  for(int i=0;i<blocks.length;i++){
-    blocks[i]=ActiveBlock();
-  }
-  // randomly generate pattern number.
+int randomPatternGenerator() {
   Random random = Random();
-  int pattern = random.nextInt(7)+1;
-  // int pattern = 7;
+  int pattern = random.nextInt(7) + 1;
+  return pattern;
+}
+
+List<ActiveBlock> generateIndicator(int pattern) {
+  List<ActiveBlock> blocks = List.generate(2 * 4, (index) => ActiveBlock());
+  for (int i = 0; i < blocks.length; i++) {
+    blocks[i] = ActiveBlock();
+  }
+  patternGenerator(blocks, pattern, 4);
+  return blocks;
+}
+
+void initActiveBlocks(List<ActiveBlock> blocks, int pattern) {
+  // initiate
+  for (int i = 0; i < blocks.length; i++) {
+    blocks[i] = ActiveBlock();
+  }
 
   matrixGenerator(blocks, pattern);
-  patternGenerator(blocks, pattern);
+  patternGenerator(blocks, pattern, blockCol);
 
   // randomly rotate this pattern.
+  Random random = Random();
   int rotateNum = random.nextInt(4);
   for (int i = 0; i < rotateNum; i++) {
     rotationHandler(blocks);
